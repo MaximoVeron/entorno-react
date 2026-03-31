@@ -2,7 +2,7 @@ import { UserModel } from "../models/user.model.js";
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await UserModel.find();
+    const users = await UserModel.find().select("-password");
     if (!users)
       return res.status(200).json({ ok: true, msg: "Aun no hay usuarios" });
     return res

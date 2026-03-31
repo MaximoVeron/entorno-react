@@ -13,9 +13,11 @@ export const registerUser = async (req, res) => {
       username,
       password: hashedPassword,
     });
-    return res
-      .status(200)
-      .json({ ok: true, msg: "Registro exitoso", Usuario: newUser });
+    return res.status(200).json({
+      ok: true,
+      msg: "Registro exitoso",
+      Usuario: { id: newUser._id, username: newUser.username },
+    });
   } catch (error) {
     console.error(error.message);
     return res
@@ -29,13 +31,12 @@ export const loginUser = async (req, res) => {
   try {
     const user = await UserModel.findOne({ username });
     if (!user)
-      return res
-        .status(400)
-        .json({ ok: false, msg: "El usuario no esta registrado" });
+      return res.status(400).json({ ok: false, msg: "Credenciales invalidas" });
     const validPassword = await comparePassword(password, user.password);
     if (!validPassword)
-      return res.status(401).json({ message: "Credenciales inválidas" });
+      return res.status(401).json({ msg: "Credenciales inválidas" });
     const token = generateToken({
+      id: user._id,
       username: user.username,
     });
     res.cookie("token", token, {

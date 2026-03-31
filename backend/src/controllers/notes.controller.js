@@ -1,8 +1,13 @@
 import { NotesModel } from "../models/notes.model.js";
 
 export const createNote = async (req, res) => {
+  const { title, content } = req.body;
   try {
-    const newNote = await NotesModel.create();
+    const newNote = await NotesModel.create({
+      author: req.user.id,
+      title,
+      content,
+    });
     return res
       .status(200)
       .json({ ok: true, msg: "Nota creada", Note: newNote });
@@ -14,7 +19,7 @@ export const createNote = async (req, res) => {
 
 export const getNotes = async (req, res) => {
   try {
-    const allNotes = await NotesModel.find();
+    const allNotes = await NotesModel.find(req.params.id);
     if (!allNotes)
       return res.status(200).json({ ok: true, msg: "Aun no hay notas" });
     return res
@@ -30,6 +35,9 @@ export const getNote = async (req, res) => {
   const { title } = req.body;
   try {
     const note = await NotesModel.findOne({ title });
+    return res
+      .status(200)
+      .json({ ok: true, msg: "Nota encontrada", Note: note });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ ok: false, msg: "Problema interno del servidor" });
@@ -37,10 +45,10 @@ export const getNote = async (req, res) => {
 };
 
 export const updateNote = async (req, res) => {
-  const { id } = req.params.id;
+  const { id } = req.params;
   try {
     const updatedNote = await NotesModel.findByIdAndUpdate(id, req.body, {
-      new: true,
+      returnDocument: "after",
     });
     return res
       .status(200)
