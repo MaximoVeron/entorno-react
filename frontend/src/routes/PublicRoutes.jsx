@@ -10,17 +10,12 @@ export const PublicRoutes = () => {
       const resp = await axios.get('http://localhost:3000/api/auth/profile', {
         withCredentials: true,
       });
-      console.log(resp.data);
-      if (resp.status === 200) {
-        setAuth(true);
-      } else {
-        setAuth(false);
-      }
+      setAuth(resp.status === 200);
     } catch (error) {
-      console.error('Error verificando autenticación:', error);
       setAuth(false);
     }
   };
+
   useEffect(() => {
     checkAuth();
   }, []);
