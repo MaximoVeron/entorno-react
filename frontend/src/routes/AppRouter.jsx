@@ -1,8 +1,9 @@
-import React from 'react';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router';
-import { PublicRoutes } from './PublicRoutes';
-import { InitPage } from '../pages/InitPage';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { HomePage } from '../pages/HomePage';
+import { InitPage } from '../pages/InitPage';
+import { NotesPage } from '../pages/NotesPage';
+import { PublicRoutes } from './PublicRoutes';
+import { PrivateRoutes } from './PrivateRoutes';
 export const AppRouter = () => {
   return (
     <BrowserRouter>
@@ -12,8 +13,9 @@ export const AppRouter = () => {
           <Route path="/register" element={<InitPage />} />
         </Route>
 
-        <Route element={<PublicRoutes />}>
+        <Route element={<PrivateRoutes />}>
           <Route path="/home" element={<HomePage />} />
+          <Route path="/notes" element={<NotesPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />

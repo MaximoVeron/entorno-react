@@ -4,7 +4,7 @@ import { Navigate, Outlet } from 'react-router';
 import { Loading } from '../components/Loading';
 
 export const PrivateRoutes = () => {
-  const [isAuth, setAuth] = useState(false);
+  const [isAuth, setAuth] = useState(null);
 
   const checkAuth = async () => {
     try {
@@ -26,6 +26,6 @@ export const PrivateRoutes = () => {
   }, []);
   if (isAuth === null) return <Loading />;
 
-  if (isAuth === true) return <Navigate to="/home" replace />;
+  if (isAuth === false) return <Navigate to="/login" replace />;
   return <Outlet />;
 };
