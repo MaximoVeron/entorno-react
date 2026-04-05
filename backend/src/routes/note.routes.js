@@ -12,7 +12,7 @@ import { NotesModel } from '../models/notes.model.js';
 
 export const noteRouter = Router();
 noteRouter.post('/auth/notes', authMiddleware, createNote);
-noteRouter.get('/notes', authMiddleware, getNotes);
+noteRouter.get('/auth/notes', authMiddleware, getNotes);
 noteRouter.get('/notes/:id', authMiddleware, getNote);
 noteRouter.put('/notes/:id', authMiddleware, isOwner(NotesModel), updateNote);
 noteRouter.delete('/notes/:id', authMiddleware, isOwner(NotesModel), deleteNote);
