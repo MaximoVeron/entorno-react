@@ -1,9 +1,12 @@
-import { AppRouter } from './routes/AppRouter';
+import { NotesProvider } from "./context/GlobalContext";
+import { AppRouter } from "./routes/AppRouter";
 
 export const App = () => {
   return (
     <>
-      <AppRouter />
+      <NotesProvider>
+        <AppRouter />
+      </NotesProvider>
     </>
   );
 };

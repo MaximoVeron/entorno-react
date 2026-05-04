@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react';
-import { Loading } from '../components/Loading';
-import axios from 'axios';
-import { Outlet, Navigate } from 'react-router';
+import { useContext, useEffect, useState } from "react";
+import { Loading } from "../components/Loading";
+import axios from "axios";
+import { Outlet, Navigate } from "react-router";
+import { NoteContext } from "../context/GlobalContext";
+
 export const PublicRoutes = () => {
   const [isAuth, setAuth] = useState(null);
+  const { setUser } = useContext(NoteContext);
 
   const checkAuth = async () => {
     try {
-      const resp = await axios.get('http://localhost:3000/api/auth/profile', {
+      const resp = await axios.get("http://localhost:3000/api/auth/profile", {
         withCredentials: true,
       });
       setAuth(resp.status === 200);

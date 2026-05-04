@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { Button } from '../components/Button';
-import { useForm } from '../hooks/useForm';
-import axios from 'axios';
-import { Navigate } from 'react-router';
+import { useState } from "react";
+import { Button } from "../components/Button";
+import { useForm } from "../hooks/useForm";
+import axios from "axios";
+import { Navigate } from "react-router";
 
 export const InitPage = () => {
   const [haveAccount, setHaveAccount] = useState(false);
@@ -11,8 +11,8 @@ export const InitPage = () => {
   const [redirect, setRedirect] = useState(false);
 
   const { handleChange, handleReset, form } = useForm({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   });
 
   const { username, password } = form;
@@ -23,16 +23,20 @@ export const InitPage = () => {
     setError(null);
 
     try {
-      const resp = await axios.post('http://localhost:3000/api/auth/login', form, {
-        withCredentials: true,
-      });
+      const resp = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        form,
+        {
+          withCredentials: true,
+        },
+      );
 
       if (resp.status === 200) {
         handleReset();
         setRedirect(true);
       }
     } catch (error) {
-      setError(error.response?.data?.msg || 'Error al iniciar sesión');
+      setError(error.response?.data?.msg || "Error al iniciar sesión");
     } finally {
       setLoading(false);
     }
@@ -44,16 +48,20 @@ export const InitPage = () => {
     setError(null);
 
     try {
-      const resp = await axios.post('http://localhost:3000/api/auth/register', form, {
-        withCredentials: true,
-      });
+      const resp = await axios.post(
+        "http://localhost:3000/api/auth/register",
+        form,
+        {
+          withCredentials: true,
+        },
+      );
 
       if (resp.status === 200) {
         handleReset();
         setHaveAccount(true);
       }
     } catch (error) {
-      setError(error.response?.data?.msg || 'Error al registrarse');
+      setError(error.response?.data?.msg || "Error al registrarse");
     } finally {
       setLoading(false);
     }
@@ -69,12 +77,12 @@ export const InitPage = () => {
             Acceso seguro
           </p>
           <h1 className="text-3xl font-semibold text-slate-900">
-            {haveAccount ? 'Inicia sesión' : 'Crea tu cuenta'}
+            {haveAccount ? "Inicia sesión" : "Crea tu cuenta"}
           </h1>
           <p className="mx-auto max-w-xl text-sm leading-6 text-slate-600">
             {haveAccount
-              ? 'Ingresa tus credenciales para acceder a tus notas.'
-              : 'Regístrate para comenzar a crear y gestionar tus notas en la aplicación.'}
+              ? "Ingresa tus credenciales para acceder a tus notas."
+              : "Regístrate para comenzar a crear y gestionar tus notas en la aplicación."}
           </p>
         </div>
 
@@ -89,7 +97,10 @@ export const InitPage = () => {
           className="space-y-5"
         >
           <div>
-            <label htmlFor="username" className="mb-2 block text-sm font-medium text-slate-700">
+            <label
+              htmlFor="username"
+              className="mb-2 block text-sm font-medium text-slate-700"
+            >
               Nombre de usuario
             </label>
             <input
@@ -103,7 +114,10 @@ export const InitPage = () => {
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700">
+            <label
+              htmlFor="password"
+              className="mb-2 block text-sm font-medium text-slate-700"
+            >
               Contraseña
             </label>
             <input
@@ -117,20 +131,24 @@ export const InitPage = () => {
           </div>
 
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? 'Cargando...' : haveAccount ? 'Iniciar sesión' : 'Registrarse'}
+            {loading
+              ? "Cargando..."
+              : haveAccount
+                ? "Iniciar sesión"
+                : "Registrarse"}
           </Button>
         </form>
 
         <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-6 text-center sm:flex-row sm:text-left">
           <p className="text-sm text-slate-500">
-            {haveAccount ? '¿Aún no tienes cuenta?' : '¿Ya tienes cuenta?'}
+            {haveAccount ? "¿Aún no tienes cuenta?" : "¿Ya tienes cuenta?"}
           </p>
           <button
             type="button"
             className="text-sm font-semibold text-blue-600 transition hover:text-blue-700"
             onClick={() => setHaveAccount(!haveAccount)}
           >
-            {haveAccount ? 'Regístrate aquí' : 'Inicia sesión aquí'}
+            {haveAccount ? "Regístrate aquí" : "Inicia sesión aquí"}
           </button>
         </div>
       </section>
