@@ -1,4 +1,12 @@
-export const Button = ({ children, onClick, type = 'button', className = '', ...props }) => {
+import { memo } from "react";
+
+const ButtonComponent = ({
+  children,
+  onClick,
+  type = "button",
+  className = "",
+  ...props
+}) => {
   return (
     <button
       type={type}
@@ -10,3 +18,5 @@ export const Button = ({ children, onClick, type = 'button', className = '', ...
     </button>
   );
 };
+
+export const Button = memo(ButtonComponent);

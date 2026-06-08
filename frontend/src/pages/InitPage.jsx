@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "../components/Button";
 import { useForm } from "../hooks/useForm";
 import axios from "axios";
@@ -17,55 +17,61 @@ export const InitPage = () => {
 
   const { username, password } = form;
 
-  const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const handleLoginSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setError(null);
 
-    try {
-      const resp = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        form,
-        {
-          withCredentials: true,
-        },
-      );
+      try {
+        const resp = await axios.post(
+          "http://localhost:3000/api/auth/login",
+          form,
+          {
+            withCredentials: true,
+          },
+        );
 
-      if (resp.status === 200) {
-        handleReset();
-        setRedirect(true);
+        if (resp.status === 200) {
+          handleReset();
+          setRedirect(true);
+        }
+      } catch (error) {
+        setError(error.response?.data?.msg || "Error al iniciar sesión");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      setError(error.response?.data?.msg || "Error al iniciar sesión");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [form, handleReset],
+  );
 
-  const handleRegisterSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const handleRegisterSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setError(null);
 
-    try {
-      const resp = await axios.post(
-        "http://localhost:3000/api/auth/register",
-        form,
-        {
-          withCredentials: true,
-        },
-      );
+      try {
+        const resp = await axios.post(
+          "http://localhost:3000/api/auth/register",
+          form,
+          {
+            withCredentials: true,
+          },
+        );
 
-      if (resp.status === 200) {
-        handleReset();
-        setHaveAccount(true);
+        if (resp.status === 200) {
+          handleReset();
+          setHaveAccount(true);
+        }
+      } catch (error) {
+        setError(error.response?.data?.msg || "Error al registrarse");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      setError(error.response?.data?.msg || "Error al registrarse");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [form, handleReset],
+  );
 
   if (redirect) return <Navigate to="/home" replace />;
 

@@ -1,4 +1,6 @@
-export const Loading = () => {
+import { memo } from "react";
+
+const LoadingComponent = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="rounded-3xl border border-slate-200 bg-white px-8 py-10 text-center shadow-sm shadow-slate-200/50">
@@ -11,3 +13,5 @@ export const Loading = () => {
     </div>
   );
 };
+
+export const Loading = memo(LoadingComponent);

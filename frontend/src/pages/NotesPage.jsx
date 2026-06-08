@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { NoteCard } from '../components/NoteCard';
-import { Loading } from '../components/Loading';
-import axios from 'axios';
-import { Button } from '../components/Button';
-import { useForm } from '../hooks/useForm';
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { NoteCard } from "../components/NoteCard";
+import { Loading } from "../components/Loading";
+import axios from "axios";
+import { Button } from "../components/Button";
+import { useForm } from "../hooks/useForm";
 
 export const NotesPage = () => {
   const [error, setError] = useState(null);
@@ -13,7 +13,10 @@ export const NotesPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [loadingPost, setLoadingPost] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
-  const { handleChange, handleReset, form } = useForm({ title: '', content: '' });
+  const { handleChange, handleReset, form } = useForm({
+    title: "",
+    content: "",
+  });
   const { title, content } = form;
 
   useEffect(() => {
@@ -21,12 +24,14 @@ export const NotesPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const resp = await axios.get('http://localhost:3000/api/auth/notes', {
+        const resp = await axios.get("http://localhost:3000/api/auth/notes", {
           withCredentials: true,
         });
         setNotes(resp.data?.notes ?? []);
       } catch (error) {
-        setError(error.response?.data?.msg || 'No se pudieron cargar las notas.');
+        setError(
+          error.response?.data?.msg || "No se pudieron cargar las notas.",
+        );
       } finally {
         setLoading(false);
       }
@@ -34,48 +39,60 @@ export const NotesPage = () => {
     getNotes();
   }, []);
 
-  const postNote = async (e) => {
-    e.preventDefault();
-    setLoadingPost(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      const resp = await axios.post('http://localhost:3000/api/auth/notes', form, {
-        withCredentials: true,
-      });
-      if (resp.status === 201 || resp.status === 200) {
-        setSuccess('Nota publicada correctamente');
-        setNotes([...notes, resp.data?.note || form]);
-        setShowForm(false);
-        handleReset();
-        setTimeout(() => setSuccess(null), 3000);
+  const postNote = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setLoadingPost(true);
+      setError(null);
+      setSuccess(null);
+      try {
+        const resp = await axios.post(
+          "http://localhost:3000/api/auth/notes",
+          form,
+          {
+            withCredentials: true,
+          },
+        );
+        if (resp.status === 201 || resp.status === 200) {
+          setSuccess("Nota publicada correctamente");
+          setNotes((prevNotes) => [...prevNotes, resp.data?.note || form]);
+          setShowForm(false);
+          handleReset();
+          setTimeout(() => setSuccess(null), 3000);
+        }
+      } catch (error) {
+        setError(error.response?.data?.msg || "No se pudo publicar la nota");
+      } finally {
+        setLoadingPost(false);
       }
-    } catch (error) {
-      setError(error.response?.data?.msg || 'No se pudo publicar la nota');
-    } finally {
-      setLoadingPost(false);
-    }
-  };
+    },
+    [form, handleReset],
+  );
 
-  const deleteNote = async (id) => {
+  const deleteNote = useCallback(async (id) => {
     setDeletingId(id);
     setError(null);
     setSuccess(null);
     try {
-      const resp = await axios.delete(`http://localhost:3000/api/auth/notes/${id}`, {
-        withCredentials: true,
-      });
+      const resp = await axios.delete(
+        `http://localhost:3000/api/auth/notes/${id}`,
+        {
+          withCredentials: true,
+        },
+      );
       if (resp.status === 200 || resp.status === 204) {
-        setSuccess('Nota eliminada correctamente');
-        setNotes(notes.filter((note) => note._id !== id));
+        setSuccess("Nota eliminada correctamente");
+        setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
         setTimeout(() => setSuccess(null), 3000);
       }
     } catch (error) {
-      setError(error.response?.data?.msg || 'No se pudo eliminar la nota');
+      setError(error.response?.data?.msg || "No se pudo eliminar la nota");
     } finally {
       setDeletingId(null);
     }
-  };
+  }, []);
+
+  const memoizedNotes = useMemo(() => notes, [notes]);
 
   if (loading === true) return <Loading />;
 
@@ -84,13 +101,15 @@ export const NotesPage = () => {
       <section className="mx-auto max-w-5xl space-y-6">
         <div className="rounded-[28px] border border-slate-200 bg-white p-8 shadow-sm shadow-slate-200/40">
           <div className="space-y-4">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Notas</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">
+              Notas
+            </p>
             <h1 className="text-3xl font-semibold text-slate-900">
               Bienvenido a la sección de notas
             </h1>
             <p className="max-w-2xl text-sm leading-7 text-slate-600">
-              Aquí puedes revisar tus notas y mantenerlas organizadas. Solo verás lo que esté
-              asociado a tu sesión activa.
+              Aquí puedes revisar tus notas y mantenerlas organizadas. Solo
+              verás lo que esté asociado a tu sesión activa.
             </p>
           </div>
 
@@ -115,19 +134,24 @@ export const NotesPage = () => {
           <div className="mt-6">
             <Button
               onClick={() => setShowForm(!showForm)}
-              className={showForm ? 'bg-slate-500 hover:bg-slate-600' : ''}
+              className={showForm ? "bg-slate-500 hover:bg-slate-600" : ""}
             >
-              {showForm ? 'Cancelar' : '+ Nueva nota'}
+              {showForm ? "Cancelar" : "+ Nueva nota"}
             </Button>
           </div>
         </div>
 
         {showForm && (
           <div className="rounded-[28px] border border-slate-200 bg-white p-8 shadow-sm shadow-slate-200/40">
-            <h2 className="mb-6 text-xl font-semibold text-slate-900">Crear nueva nota</h2>
+            <h2 className="mb-6 text-xl font-semibold text-slate-900">
+              Crear nueva nota
+            </h2>
             <form onSubmit={postNote} className="space-y-5">
               <div className="space-y-2">
-                <label htmlFor="title" className="block text-sm font-medium text-slate-700">
+                <label
+                  htmlFor="title"
+                  className="block text-sm font-medium text-slate-700"
+                >
                   Título
                 </label>
                 <input
@@ -143,7 +167,10 @@ export const NotesPage = () => {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="content" className="block text-sm font-medium text-slate-700">
+                <label
+                  htmlFor="content"
+                  className="block text-sm font-medium text-slate-700"
+                >
                   Contenido
                 </label>
                 <textarea
@@ -160,7 +187,7 @@ export const NotesPage = () => {
 
               <div className="flex gap-3 pt-4">
                 <Button type="submit" disabled={loadingPost}>
-                  {loadingPost ? 'Publicando...' : 'Publicar nota'}
+                  {loadingPost ? "Publicando..." : "Publicar nota"}
                 </Button>
                 <Button
                   type="button"
@@ -179,15 +206,19 @@ export const NotesPage = () => {
         )}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {notes.map((note) => (
+          {memoizedNotes.map((note) => (
             <div key={note._id} className="flex flex-col gap-3">
-              <NoteCard title={note.title} author={note.author} content={note.content} />
+              <NoteCard
+                title={note.title}
+                author={note.author}
+                content={note.content}
+              />
               <button
                 onClick={() => deleteNote(note._id)}
                 disabled={deletingId === note._id}
                 className="w-full rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 disabled:bg-red-300"
               >
-                {deletingId === note._id ? 'Eliminando...' : 'Eliminar'}
+                {deletingId === note._id ? "Eliminando..." : "Eliminar"}
               </button>
             </div>
           ))}
